@@ -1,0 +1,12 @@
+<h2>Your Collection:</h2>
+<div class="row">
+  <ul>
+    <% @user.boardgames.each do |boardgame| %>
+      <li><%= boardgame.name %></li>
+    <% end %>
+  </ul>
+</div>
+
+<form action="/boardgames/new">
+  <button type="submit" class="btn btn-primary">Add Boardgame</button>
+</form>
