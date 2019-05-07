@@ -2,19 +2,18 @@ class BoardgamesController < ApplicationController
   
   get '/boardgames' do
     if logged_in?
-      @boardgames = Boardgame.all.uniq
+      @boardgames = Boardgame.all.uniq{ |bg| bg.name }
       erb :'/boardgames/index' 
     else
-      redirect '/login'
+      redirect '/login', :layout => :layout_nouser
     end
-
   end
 
   get '/boardgames/new' do
     if logged_in?
       erb :'/boardgames/new'
     else
-      redirect '/login'
+      redirect '/login', :layout => :layout_nouser
     end
   end
 
@@ -22,11 +21,11 @@ class BoardgamesController < ApplicationController
     if params[:boardgame]["name"].empty?
       redirect '/boardgames/new'
     else
-      Boardgame.all.each do |boardgame|
-        if boardgame.name == params[:boardgame]["name"]
-          redirect '/boardgames/new'
-        end
-      end
+      # Boardgame.all.each do |boardgame|
+      #   if boardgame.name == params[:boardgame]["name"]
+      #     redirect '/boardgames/new'
+      #   end
+      # end
         
       @boardgame = Boardgame.create(params[:boardgame])
       current_user.boardgames << @boardgame
@@ -34,17 +33,15 @@ class BoardgamesController < ApplicationController
       redirect to "boardgames/#{@boardgame.id}"
     end
   end
-  
-  get '/boardgames/:id/add' do
-    @boardgame = Boardgame.find_by_id(params[:id])
-    current_user.boardgames << @boardgame
-    redirect "/boardgames/#{@boardgame.id}"
-  end
 
   get '/boardgames/:id' do
-    @boardgame = Boardgame.find(params[:id])
-    @users = User.all
-    erb :'/boardgames/show'
+    if logged_in?
+      @boardgame = Boardgame.find(params[:id])
+      @user = User.find_by(id: @boardgame.user_id)
+      erb :'/boardgames/show'
+    else
+      redirect '/login', :layout => :layout_nouser
+    end
   end
 
   patch '/boardgames/:id' do 
@@ -64,8 +61,28 @@ class BoardgamesController < ApplicationController
   end
 
   get '/boardgames/:id/edit' do
-    @boardgame = Boardgame.find(params[:id])
-    erb :'/boardgames/edit'
+    if logged_in?
+      @boardgame = Boardgame.find(params[:id])
+      if current_user.id == @boardgame.user_id
+        erb :'/boardgames/edit'
+      else
+        redirect '/boardgames'
+      end
+    else
+      redirect '/login', :layout => :layout_nouser
+    end
+  end
+  
+  delete '/boardgames/:id' do
+    if logged_in?
+      @boardgame = Boardgame.find_by_id(params[:id])
+      if current_user.id == @boardgame.user_id
+        @boardgame.delete
+        redirect '/boardgames'
+      end
+    else
+      redirect '/login', :layout => :layout_nouser
+    end
   end
   
 end
