@@ -1,7 +1,9 @@
-<h2> Boardgames: </h2>
+<h2>Boardgames:</h2>
 
-<% @boardgames.each do |boardgame| %>
-  <div>
-    <%= boardgame.name %>
-  </div>
-<% end %>
+<div class="row">
+  <ul>
+    <% @boardgames.each do |boardgame| %>
+      <li><a href="/boardgames/<%= boardgame.id %>"><%= boardgame.name %></a></li>
+    <% end %>
+  </ul>
+</div>
