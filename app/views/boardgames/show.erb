@@ -1,24 +1,14 @@
 <h2><%=@boardgame.name%></h2>
 
-<h4>Owners:</h4>
-<div class="row">
-  <ul>
-    <% @users.each do |user| %>
-        <% user.boardgames.each do |boardgame| %>
-            <% if boardgame.name == @boardgame.name %>
-                <li><%= user.username %></li>
-            <% end %>
-        <% end %>
-    <% end %>
-  </ul>
-</div>
+<h5>Publisher: <%= @user.username %></h5>
 
 <% if current_user.id == @boardgame.user_id %>
 <form action="/boardgames/<%= @boardgame.id %>/edit">
   <button type="submit" class="btn btn-primary">Edit</button>
 </form>
-<% else %>
-<form action="/boardgames/<%= @boardgame.id %>/add">
-  <button type="submit" class="btn btn-primary">Add to Collection</button>
+
+<form action="/boardgames/<%=@boardgame.id%>" method="POST">
+  <input id="hidden" type="hidden" name="_method" value="DELETE">
+  <input type="submit" class="btn btn-danger" id="delete" value="Delete">
 </form>
 <% end %>
