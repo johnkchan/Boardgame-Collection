@@ -3,7 +3,7 @@
 <div class="row">
   <ul>
     <% @boardgames.each do |boardgame| %>
-      <li><a href="/boardgames/<%= boardgame.id %>"><%= boardgame.name %></a></li>
+      <li><a href="/boardgames/<%= boardgame.id %>"><%= boardgame.name %></a> - <%= boardgame.user.username %></li>
     <% end %>
   </ul>
 </div>
