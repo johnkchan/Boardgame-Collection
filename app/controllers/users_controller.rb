@@ -16,10 +16,8 @@ class UsersController < ApplicationController
   post '/signup' do
     if !params[:password].empty? && !params[:username].empty? && !params[:email].empty?
       
-      User.all.each do |user|
-        if user.username == params[:username]
-          redirect '/signup', :layout => :layout_nouser
-        end
+      if User.find_by(:username => params[:username])
+        redirect '/signup'
       end
       
       @user = User.new(:username => params[:username], :email => params[:email], :password => params[:password])
@@ -27,10 +25,10 @@ class UsersController < ApplicationController
         session[:user_id] = @user.id
         redirect "/users/#{@user.slug}"
       else
-        redirect '/signup', :layout => :layout_nouser
+        redirect '/signup'
       end
     else
-      redirect '/signup', :layout => :layout_nouser
+      redirect '/signup'
     end
   end
 
@@ -48,17 +46,15 @@ class UsersController < ApplicationController
       session[:user_id] = user.id
       redirect "/users/#{user.slug}"
     else
-      redirect '/login', :layout => :layout_nouser
+      redirect '/login'
     end
   end
 
   get '/logout' do
     if logged_in?
       session.destroy
-      redirect '/login', :layout => :layout_nouser
-    else
-      redirect '/'
     end
+    redirect '/login'
   end
 
 end
